@@ -1,7 +1,10 @@
 <template>
     <div>
-        哈哈哈哈
+        <p>你笑一个</p>
+        <router-view></router-view>
+        <el-button>点我啊</el-button>
     </div>
+
 </template>
 
 <script>
