@@ -1,20 +1,14 @@
 <template>
-    <div>
-        <p>你笑一个</p>
-        <router-view></router-view>
-        <el-button>点我啊</el-button>
-    </div>
-
+    <router-view></router-view>
 </template>
 
 <script>
 export default {
-    created(){
-        this.$router.push('/')
-    }
-}
+  // created(){
+  //     this.$router.push('/')
+  // }
+};
 </script>
 
 <style>
-
 </style>

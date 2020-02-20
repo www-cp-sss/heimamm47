@@ -1,0 +1,30 @@
+{
+  "id": "",
+  "name": "",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "1010107",
+      "name": "密码",
+      "font_class": "mima",
+      "unicode": "e614",
+      "unicode_decimal": 58900
+    },
+    {
+      "icon_id": "1486847",
+      "name": "用户",
+      "font_class": "yonghu",
+      "unicode": "e633",
+      "unicode_decimal": 58931
+    },
+    {
+      "icon_id": "7131916",
+      "name": "验证码",
+      "font_class": "yanzhengma",
+      "unicode": "e744",
+      "unicode_decimal": 59204
+    }
+  ]
+}
