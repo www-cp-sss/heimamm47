@@ -8,13 +8,14 @@
       <el-form :model="form" :rules="rules" ref="form">
         <el-form-item label="头像" :label-width="formLabelWidth" prop="touxiang">
           <el-upload
-            class="touxiang"
+            class="avatar-uploader touxiang"
             action="https://jsonplaceholder.typicode.com/posts/"
-            list-type="picture-card"
-            :on-preview="form.handlePictureCardPreview"
-            :on-remove="form.handleRemove"
+            :show-file-list="false"
+            :on-success="form.handleAvatarSuccess"
+            :before-upload="form.beforeAvatarUpload"
           >
-            <i class="el-icon-plus"></i>
+            <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
           </el-upload>
           <el-dialog :visible.sync="form.dialogVisible" size="tiny">
             <img width="100%" :src="form.dialogImageUrl" alt />
@@ -29,7 +30,7 @@
         <el-form-item label="手机" :label-width="formLabelWidth" prop="phone">
           <el-input v-model="form.phone" auto-complete="off"></el-input>
         </el-form-item>
-        <el-form-item label="密码" :label-width="formLabelWidth" prop="password">
+        <el-form-item label="密码" show-password :label-width="formLabelWidth" prop="password">
           <el-input v-model="form.password" auto-complete="off"></el-input>
         </el-form-item>
         <el-form-item label="图形码" :label-width="formLabelWidth" prop="code">
@@ -39,7 +40,7 @@
             </el-col>
             <el-col :span="7">
               <div class="reg_code">
-                <img src="../img/code.png" alt />
+                <img :src="picUrl" alt @click="getRandomCode" ref="reg_code_picUrl" />
               </div>
             </el-col>
           </el-row>
@@ -50,7 +51,12 @@
               <el-input v-model="form.msg" auto-complete="off"></el-input>
             </el-col>
             <el-col :span="7">
-              <el-button class="reg_msg" plain>获取验证码</el-button>
+              <el-button
+                :disabled="btnDisabled"
+                class="reg_msg"
+                plain
+                @click="huoquCode"
+              >{{shijian==0?'获取用户验证码':'请'+shijian+'s后重新发送'}}</el-button>
             </el-col>
           </el-row>
         </el-form-item>
@@ -67,6 +73,7 @@
 export default {
   data() {
     return {
+      // form表单
       form: {
         dialogImageUrl: "",
         dialogVisible: false,
@@ -77,12 +84,12 @@ export default {
         delivery: false,
         type: [],
         code: "",
-        msg: "",
-        touxiang:'',
+        msg: ""
       },
       formLabelWidth: "70px",
-        //  dialogTableVisible: false,
-        dialogFormVisible: false,
+      //  dialogTableVisible: false,
+      dialogFormVisible: false,
+      // 验证规则
       rules: {
         name: [
           { required: true, message: "昵称不能为空", trigger: "blur" },
@@ -94,7 +101,11 @@ export default {
         ],
         phone: [
           { required: true, message: "手机号不能为空", trigger: "blur" },
-          { pattern:/0?(13|14|15|18|17)[0-9]{9}/, message: "长度在11个字符", trigger: "change" }
+          {
+            pattern: /0?(13|14|15|18|17)[0-9]{9}/,
+            message: "长度在11个字符",
+            trigger: "change"
+          }
         ],
         password: [
           { required: true, message: "密码不能为空", trigger: "blur" },
@@ -108,21 +119,78 @@ export default {
           { required: true, message: "验证码不能为空", trigger: "blur" },
           { min: 4, max: 8, message: "请正确输入验证码", trigger: "change" }
         ]
-      }
+      },
+      // 获取图形码
+      picUrl: process.env.VUE_APP_URL + "/captcha?type=sendsms",
+      // 获取头像
+      imageUrl: "",
+      // 获取验证码
+      btnDisabled: false,
+      // 倒计时
+      shijian: 0
     };
   },
   methods: {
+    // 确认的点击事件
     dialogFormVisibles() {
       this.$refs.form.validate(valid => {
         if (valid) {
           console.log(1);
+          this.$axios({
+            url: "/register" + "&" + Math.random() * 99,
+            method: "post",
+            withCredentials: true
+          }).then(res => {
+            //成功回调
+            console.log(res);
+          });
+          this.$axios({
+            url: "/uploads",
+            method: "post",
+            data: { image: this.imageUrl }
+          }).then(res => {
+            //成功回调
+            console.log(res);
+          });
         } else {
           console.log("error submit!!");
           return false;
         }
       });
+    },
+    // 图形码的点击事件
+    getRandomCode() {
+      // 利用时间戳刷新验证码
+      this.$refs.reg_code_picUrl.src =
+        process.env.VUE_APP_URL + "/captcha?type=sendsms" + "&" + Date.now();
+    },
+    huoquCode() {
+      this.btnDisabled = true;
+      this.shijian = 60;
+      let tiemr = setInterval(() => {
+        if (this.shijian != 0) {
+          this.shijian--;
+        } else {
+          clearInterval(tiemr);
+          this.btnDisabled = false;
+        }
+      }, 1000);
+      console.log(this.form.code,this.form.phone)
+      this.$axios({
+        url:"/sendsms",
+        method: "post",
+        data: {
+           code: this.form.code ,
+          phone:this.form.phone
+        },
+        withCredentials: true
+      }).then(res => {
+        //成功回调
+        console.log(res);
+      });
     }
-  }
+  },
+  created() {}
 };
 </script>
 
@@ -143,9 +211,6 @@ export default {
       width: 100%;
       height: 100%;
     }
-  }
-  .reg_msg {
-    margin-left: 24px;
   }
 }
 

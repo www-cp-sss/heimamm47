@@ -11,7 +11,7 @@ import './assets/css/base.css';
 // 引用less
 import less from 'less';
 import axios from 'axios'
-axios.defaults.baseURL="http://192.168.0.103/heimamm/public";
+axios.defaults.baseURL="http://127.0.0.1/heimamm/public";
 Vue.prototype.$axios = axios;
 Vue.use(less)
 // 注册 Element-ui

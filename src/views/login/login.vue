@@ -37,7 +37,13 @@
                 </el-col>
                 <el-col :span="7">
                   <div class="login_img">
-                    <img src="../login/img/code.png" alt />
+                    <img
+                      src="http://127.0.0.1/heimamm/public/captcha?type=login"
+                      class="captcha"
+                      alt
+                      ref="captcha"
+                      @click="getRandomCode"
+                    />
                   </div>
                 </el-col>
               </el-row>
@@ -66,15 +72,14 @@
     </div>
     <register ref="reg"></register>
   </div>
-  
 </template>
 
 <script>
-import register from "./components/register"
+import register from "./components/register";
 // import { login } from "../../api/login";
 export default {
-  components:{
-    register,
+  components: {
+    register
   },
   data() {
     return {
@@ -98,7 +103,7 @@ export default {
         ],
         code: [
           { required: true, message: "验证码不能为空", trigger: "blur" },
-          { min: 8, max: 16, message: "请正确输入验证码", trigger: "change" }
+          { min: 4, max: 4, message: "请正确输入验证码", trigger: "change" }
         ],
         type: [
           {
@@ -107,33 +112,44 @@ export default {
             trigger: "change"
           }
         ]
-      }
+      },
+      // actions: ""
     };
   },
   methods: {
     submitForm() {
       this.$refs.form.validate(valid => {
         if (valid) {
-          console.log(1)
+          console.log(1);
+          this.$axios({
+            url:'/login',
+            method:'post',
+            data: { 
+              phone:this.form.user,
+              password:this.form.password,
+              code:this.form.code
+              },
+              withCredentials: true
+          }).then(res=>{
+            //成功回调
+            console.log(res)
+          });
         } else {
           console.log("error submit!!");
           return false;
         }
       });
     },
-    zhuce(){
+    zhuce() {
       this.$refs.reg.dialogFormVisible = true;
+    },
+    getRandomCode() {
+      // 时间戳
+      this.$refs.captcha.src = `http://127.0.0.1/heimamm/public/captcha?type=login&${Date.now()}`;
+      // 随机数
+      // this.$refs.captcha.src=`http://127.0.0.1/heimamm/public/captcha?type=login&${Math.random()}`
     }
-  },
-  // created() {
-  //    this.$axios({
-  //    url:'/register',
-  //    method:'post',
-  //  }).then(res=>{
-  //    //成功回调
-  //    console.log(res)
-  //  });
-  // }
+  }
 };
 </script>
 
@@ -192,7 +208,7 @@ export default {
         vertical-align: top;
       }
     }
-    .login_code{
+    .login_code {
       margin-bottom: 32px;
     }
     .agree {
