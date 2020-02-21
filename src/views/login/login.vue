@@ -64,12 +64,18 @@
         </div>
       </div>
     </div>
+    <register></register>
   </div>
+  
 </template>
 
 <script>
+import register from "./components/register"
 // import { login } from "../../api/login";
 export default {
+  components:{
+    register,
+  },
   data() {
     return {
       form: {
