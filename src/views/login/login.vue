@@ -19,21 +19,21 @@
         </div>
         <div id="form">
           <el-form ref="form" :model="form" :rules="rules" class="demo-ruleForm">
-            <el-form-item prop="input1">
-              <el-input placeholder="请输入内容" prefix-icon="el-icon-user" v-model="form.input1"></el-input>
+            <el-form-item prop="user">
+              <el-input placeholder="请输入内容" prefix-icon="el-icon-user" v-model="form.user"></el-input>
             </el-form-item>
-            <el-form-item prop="input2">
+            <el-form-item prop="password">
               <el-input
                 show-password
                 placeholder="请输入密码"
                 prefix-icon="el-icon-lock"
-                v-model="form.input2"
+                v-model="form.password"
               ></el-input>
             </el-form-item>
-            <el-form-item prop="input3">
+            <el-form-item class="login_code" prop="code">
               <el-row>
                 <el-col :span="17">
-                  <el-input placeholder="请输入验证码" prefix-icon="el-icon-search" v-model="form.input3"></el-input>
+                  <el-input placeholder="请输入验证码" prefix-icon="el-icon-search" v-model="form.code"></el-input>
                 </el-col>
                 <el-col :span="7">
                   <div class="login_img">
@@ -46,7 +46,7 @@
               <!-- <el-checkbox-group > -->
               <el-checkbox class="el-checkbox_labol" v-model="form.type">
                 我已阅读并知晓
-                <el-link  :underline="false"  class="xieyi" type="primary" href="javascript:;">用户协议</el-link>和
+                <el-link :underline="false" class="xieyi" type="primary" href="javascript:;">用户协议</el-link>和
                 <el-link :underline="false" class="yinsi" type="primary" href="javascript:;">隐私条款</el-link>
               </el-checkbox>
               <!-- </el-checkbox-group> -->
@@ -68,35 +68,35 @@
 </template>
 
 <script>
-import { login } from "../../api/login";
+// import { login } from "../../api/login";
 export default {
   data() {
     return {
       form: {
-        input1: "",
-        input2: "",
-        input3: "",
-        type: ""
+        user: "",
+        password: "",
+        code: "",
+        type: false
       },
       rules: {
         // trigger : 判断条件  blur  离开勾选框的时候判断   change: 在勾选框中判断
         // message : 判断信息
         // required :
-        input1: [
-          { required: true, message: "请输入手机号", trigger: "blur" },
+        user: [
+          { required: true, message: "手机号不能为空", trigger: "blur" },
           { min: 11, max: 11, message: "长度在11个字符", trigger: "change" }
         ],
-        input2: [
-          { required: true, message: "请输入密码", trigger: "blur" },
+        password: [
+          { required: true, message: "密码不能为空", trigger: "blur" },
           { min: 8, max: 16, message: "长度在8-16个字符", trigger: "change" }
         ],
-        input3: [
-          { required: true, message: "请输入验证码", trigger: "blur" },
+        code: [
+          { required: true, message: "验证码不能为空", trigger: "blur" },
           { min: 8, max: 16, message: "请正确输入验证码", trigger: "change" }
         ],
         type: [
           {
-            required: true,
+            pattern: /true/,
             message: "请阅读协议",
             trigger: "change"
           }
@@ -106,22 +106,25 @@ export default {
   },
   methods: {
     submitForm() {
-      this.$refs["form"].validate(valid => {
+      this.$refs.form.validate(valid => {
         if (valid) {
-          console.log(login(this.form));
-          login(this.form).then(res => {
-            console.log(res);
-            if (res.data.code == 200) {
-              alert("submit!");
-            }
-          });
+          console.log(1)
         } else {
           console.log("error submit!!");
           return false;
         }
       });
     }
-  }
+  },
+  // created() {
+  //    this.$axios({
+  //    url:'/register',
+  //    method:'post',
+  //  }).then(res=>{
+  //    //成功回调
+  //    console.log(res)
+  //  });
+  // }
 };
 </script>
 
@@ -177,16 +180,21 @@ export default {
       img {
         width: 100%;
         height: 100%;
+        vertical-align: top;
       }
     }
+    .login_code{
+      margin-bottom: 32px;
+    }
     .agree {
+      vertical-align: middle;
       display: flex;
       .el-checkbox_labol {
         display: flex;
         align-items: center;
         .xieyi,
         .yinsi {
-          margin-bottom: 2px;
+          margin-bottom: 3px;
         }
       }
     }
@@ -199,7 +207,7 @@ export default {
   .login_bgc {
     position: absolute;
     right: 73px;
-    top: 174px;
+    top: 134px;
   }
 }
 </style>

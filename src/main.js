@@ -9,7 +9,10 @@ import 'element-ui/lib/theme-chalk/index.css';
 import './assets/font/iconfont.css'
 import './assets/css/base.css';
 // 引用less
-import less from 'less'
+import less from 'less';
+import axios from 'axios'
+axios.defaults.baseURL="http://192.168.0.103/heimamm/public";
+Vue.prototype.$axios = axios;
 Vue.use(less)
 // 注册 Element-ui
 Vue.use(ElementUI);
