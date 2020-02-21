@@ -6,18 +6,20 @@
 
     <el-dialog title="用户注册" center :visible.sync="dialogFormVisible" width="550px">
       <el-form :model="form" :rules="rules" ref="form">
-        <el-upload
-          class="touxiang"
-          action="https://jsonplaceholder.typicode.com/posts/"
-          list-type="picture-card"
-          :on-preview="form.handlePictureCardPreview"
-          :on-remove="form.handleRemove"
-        >
-          <i class="el-icon-plus"></i>
-        </el-upload>
-        <el-dialog :visible.sync="form.dialogVisible" size="tiny">
-          <img width="100%" :src="form.dialogImageUrl" alt />
-        </el-dialog>
+        <el-form-item label="头像" :label-width="formLabelWidth" prop="touxiang">
+          <el-upload
+            class="touxiang"
+            action="https://jsonplaceholder.typicode.com/posts/"
+            list-type="picture-card"
+            :on-preview="form.handlePictureCardPreview"
+            :on-remove="form.handleRemove"
+          >
+            <i class="el-icon-plus"></i>
+          </el-upload>
+          <el-dialog :visible.sync="form.dialogVisible" size="tiny">
+            <img width="100%" :src="form.dialogImageUrl" alt />
+          </el-dialog>
+        </el-form-item>
         <el-form-item label="昵称" :label-width="formLabelWidth" prop="name">
           <el-input v-model="form.name" auto-complete="off"></el-input>
         </el-form-item>
@@ -55,7 +57,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogFormVisible">确 定</el-button>
+        <el-button type="primary" @click="dialogFormVisibles">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -75,11 +77,12 @@ export default {
         delivery: false,
         type: [],
         code: "",
-        msg: ""
+        msg: "",
+        touxiang:'',
       },
       formLabelWidth: "70px",
-      //    dialogTableVisible: false,
-      //   dialogFormVisible: true
+        //  dialogTableVisible: false,
+        dialogFormVisible: false,
       rules: {
         name: [
           { required: true, message: "昵称不能为空", trigger: "blur" },
@@ -91,11 +94,11 @@ export default {
         ],
         phone: [
           { required: true, message: "手机号不能为空", trigger: "blur" },
-          { min: 7,max:11, message: "长度在1-6个字符", trigger: "change" }
+          { pattern:/0?(13|14|15|18|17)[0-9]{9}/, message: "长度在11个字符", trigger: "change" }
         ],
         password: [
           { required: true, message: "密码不能为空", trigger: "blur" },
-          { min:8,max:16, message: "长度在8-16个字符", trigger: "change" }
+          { min: 8, max: 16, message: "长度在8-16个字符", trigger: "change" }
         ],
         code: [
           { required: true, message: "图形码不能为空", trigger: "blur" },
@@ -104,12 +107,12 @@ export default {
         msg: [
           { required: true, message: "验证码不能为空", trigger: "blur" },
           { min: 4, max: 8, message: "请正确输入验证码", trigger: "change" }
-        ],
+        ]
       }
     };
   },
   methods: {
-    dialogFormVisible() {
+    dialogFormVisibles() {
       this.$refs.form.validate(valid => {
         if (valid) {
           console.log(1);

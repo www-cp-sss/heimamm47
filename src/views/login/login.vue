@@ -55,7 +55,7 @@
               <el-button class="login_denglu" type="primary" @click="submitForm('form')">登录</el-button>
             </el-form-item>
             <el-form-item>
-              <el-button class="login_zhuce" type="primary">注册</el-button>
+              <el-button class="login_zhuce" type="primary" @click="zhuce">注册</el-button>
             </el-form-item>
           </el-form>
         </div>
@@ -64,7 +64,7 @@
         </div>
       </div>
     </div>
-    <register></register>
+    <register ref="reg"></register>
   </div>
   
 </template>
@@ -120,6 +120,9 @@ export default {
           return false;
         }
       });
+    },
+    zhuce(){
+      this.$refs.reg.dialogFormVisible = true;
     }
   },
   // created() {
