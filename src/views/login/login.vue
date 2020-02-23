@@ -77,6 +77,7 @@
 <script>
 import register from "./components/register";
 // import { login } from "../../api/login";
+import { login } from "./../../api/login";
 export default {
   components: {
     register
@@ -87,7 +88,7 @@ export default {
         user: "",
         password: "",
         code: "",
-        type: false
+        type: false,
       },
       rules: {
         // trigger : 判断条件  blur  离开勾选框的时候判断   change: 在勾选框中判断
@@ -95,7 +96,11 @@ export default {
         // required :
         user: [
           { required: true, message: "手机号不能为空", trigger: "blur" },
-          { min: 11, max: 11, message: "长度在11个字符", trigger: "change" }
+          {
+            pattern: /0?(13|14|15|18|17)[0-9]{9}/,
+            message: "长度在11个字符",
+            trigger: "change"
+          }
         ],
         password: [
           { required: true, message: "密码不能为空", trigger: "blur" },
@@ -103,7 +108,7 @@ export default {
         ],
         code: [
           { required: true, message: "验证码不能为空", trigger: "blur" },
-          { min: 4, max: 4, message: "请正确输入验证码", trigger: "change" }
+          { len:4, message: "请正确输入验证码", trigger: "change" }
         ],
         type: [
           {
@@ -112,7 +117,7 @@ export default {
             trigger: "change"
           }
         ]
-      },
+      }
       // actions: ""
     };
   },
@@ -120,23 +125,21 @@ export default {
     submitForm() {
       this.$refs.form.validate(valid => {
         if (valid) {
-          console.log(1);
-          this.$axios({
-            url:'/login',
-            method:'post',
-            data: { 
-              phone:this.form.user,
-              password:this.form.password,
-              code:this.form.code
-              },
-              withCredentials: true
-          }).then(res=>{
+          login({
+            phone: this.form.user,
+            password: this.form.password,
+            code: this.form.code
+          }).then(res => {
             //成功回调
-            console.log(res)
+            console.log(res);
+            if(res.data.code==200){
+              this.$message.success('登录成功!');
+              window.localStorage.setItem('token',res.data.data.token);
+              this.$router.push('/index')
+            }else{
+              this.$message.error(res.data.message)
+            }
           });
-        } else {
-          console.log("error submit!!");
-          return false;
         }
       });
     },
@@ -144,7 +147,7 @@ export default {
       this.$refs.reg.dialogFormVisible = true;
     },
     getRandomCode() {
-      // 时间戳
+      // 时间戳  避免跨域
       this.$refs.captcha.src = `http://127.0.0.1/heimamm/public/captcha?type=login&${Date.now()}`;
       // 随机数
       // this.$refs.captcha.src=`http://127.0.0.1/heimamm/public/captcha?type=login&${Math.random()}`
