@@ -6,20 +6,19 @@
 
     <el-dialog title="用户注册" center :visible.sync="dialogFormVisible" width="550px">
       <el-form :model="form" :rules="rules" ref="form">
-        <el-form-item label="头像" :label-width="formLabelWidth" prop="touxiang">
+        <el-form-item label="头像" :label-width="formLabelWidth" prop="avatar">
           <el-upload
-            class="avatar-uploader touxiang"
-            action="https://jsonplaceholder.typicode.com/posts/"
+            v-model="form.avatar"
+            name="image"
+            class="avatar-uploader"
+            :action="avatarUrl"
             :show-file-list="false"
-            :on-success="form.handleAvatarSuccess"
-            :before-upload="form.beforeAvatarUpload"
+            :on-success="handleAvatarSuccess"
+            :before-upload="beforeAvatarUpload"
           >
             <img v-if="imageUrl" :src="imageUrl" class="avatar" />
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
           </el-upload>
-          <el-dialog :visible.sync="form.dialogVisible" size="tiny">
-            <img width="100%" :src="form.dialogImageUrl" alt />
-          </el-dialog>
         </el-form-item>
         <el-form-item label="昵称" :label-width="formLabelWidth" prop="name">
           <el-input v-model="form.name" auto-complete="off"></el-input>
@@ -30,8 +29,8 @@
         <el-form-item label="手机" :label-width="formLabelWidth" prop="phone">
           <el-input v-model="form.phone" auto-complete="off"></el-input>
         </el-form-item>
-        <el-form-item label="密码" show-password :label-width="formLabelWidth" prop="password">
-          <el-input v-model="form.password" auto-complete="off"></el-input>
+        <el-form-item label="密码" :label-width="formLabelWidth" prop="password">
+          <el-input v-model="form.password" show-password auto-complete="off"></el-input>
         </el-form-item>
         <el-form-item label="图形码" :label-width="formLabelWidth" prop="code">
           <el-row>
@@ -52,7 +51,7 @@
             </el-col>
             <el-col :span="7">
               <el-button
-                :disabled="btnDisabled"
+                :disabled="shijian != 0"
                 class="reg_msg"
                 plain
                 @click="huoquCode"
@@ -70,35 +69,54 @@
 </template>
 
 <script>
+// 导入封装的axios
+import { sendUrl, register } from "../../../api/register";
 export default {
   data() {
     return {
       // form表单
       form: {
-        dialogImageUrl: "",
-        dialogVisible: false,
+        // 用户名
         name: "",
+        // 邮箱
         email: "",
+        // 手机号
         phone: "",
+        // 密码
         password: "",
-        delivery: false,
+        // 属性
         type: [],
+        // 图形码
         code: "",
-        msg: ""
+        // 验证码
+        msg: "",
+        // 头像地址
+        avatar: ""
       },
+      // 头像的请求地址
+      avatarUrl:
+        process.env.VUE_APP_URL + "/uploads" + "&" + Math.random() * 99,
+      imageUrl: "",
+      // 表单的宽度
       formLabelWidth: "70px",
       //  dialogTableVisible: false,
+      // 是否显示注册框
       dialogFormVisible: false,
       // 验证规则
       rules: {
+        // 头像
+        avatar: [{ required: true, message: "昵称不能为空", trigger: "blur" }],
+        // 姓名
         name: [
           { required: true, message: "昵称不能为空", trigger: "blur" },
           { max: 6, message: "长度在1-6个字符", trigger: "change" }
         ],
+        // 邮箱
         email: [
           { required: true, message: "邮箱不能为空", trigger: "blur" },
           { type: "email", message: "邮箱格式不正确", trigger: "change" }
         ],
+        // 手机
         phone: [
           { required: true, message: "手机号不能为空", trigger: "blur" },
           {
@@ -107,54 +125,53 @@ export default {
             trigger: "change"
           }
         ],
+        // 密码
         password: [
           { required: true, message: "密码不能为空", trigger: "blur" },
           { min: 8, max: 16, message: "长度在8-16个字符", trigger: "change" }
         ],
+        // 图形码
         code: [
           { required: true, message: "图形码不能为空", trigger: "blur" },
-          { min: 4, max: 8, message: "请正确输入验证码", trigger: "change" }
+          {len:4, message: "请正确输入验证码", trigger: "change" }
         ],
+        // 验证码
         msg: [
           { required: true, message: "验证码不能为空", trigger: "blur" },
-          { min: 4, max: 8, message: "请正确输入验证码", trigger: "change" }
+          { len:4, message: "请正确输入验证码", trigger: "change" }
         ]
       },
       // 获取图形码
       picUrl: process.env.VUE_APP_URL + "/captcha?type=sendsms",
-      // 获取头像
-      imageUrl: "",
       // 获取验证码
-      btnDisabled: false,
+      // btnDisabled: false,
       // 倒计时
       shijian: 0
     };
   },
   methods: {
     // 确认的点击事件
+     //要找到表单对象（就先要给表单加ref属性）
     dialogFormVisibles() {
       this.$refs.form.validate(valid => {
         if (valid) {
-          console.log(1);
-          this.$axios({
-            url: "/register" + "&" + Math.random() * 99,
-            method: "post",
-            withCredentials: true
+          register({
+            username: this.form.name,
+            phone: this.form.phone,
+            email: this.form.email,
+            avatar: this.form.avatar,
+            password: this.form.password,
+            rcode: this.form.code
           }).then(res => {
-            //成功回调
-            console.log(res);
+            if (res.data.code == 200) {
+              this.$message.success("注册成功!");
+              this.dialogFormVisible = false;
+              this.$refs.form.resetFields();
+              this.imageUrl = "";
+            } else {
+              this.$message.error(res.data.message);
+            }
           });
-          this.$axios({
-            url: "/uploads",
-            method: "post",
-            data: { image: this.imageUrl }
-          }).then(res => {
-            //成功回调
-            console.log(res);
-          });
-        } else {
-          console.log("error submit!!");
-          return false;
         }
       });
     },
@@ -164,30 +181,60 @@ export default {
       this.$refs.reg_code_picUrl.src =
         process.env.VUE_APP_URL + "/captcha?type=sendsms" + "&" + Date.now();
     },
-    huoquCode() {
+    // 时间封装
+    getTime(time) {
       this.btnDisabled = true;
-      this.shijian = 60;
+      this.shijian = time;
       let tiemr = setInterval(() => {
         if (this.shijian != 0) {
           this.shijian--;
         } else {
           clearInterval(tiemr);
-          this.btnDisabled = false;
+          // this.btnDisabled = false;
         }
       }, 1000);
-      console.log(this.form.code,this.form.phone)
-      this.$axios({
-        url:"/sendsms",
-        method: "post",
-        data: {
-           code: this.form.code ,
-          phone:this.form.phone
-        },
-        withCredentials: true
+    },
+    // 获取验证码
+    huoquCode() {
+      if (!/0?(13|14|15|18|17)[0-9]{9}/.test(this.form.phone)) {
+        return this.$message.error("手机号码不正确");
+      }
+      if (this.form.code.length != 4) {
+        return this.$message.error("验证码格式不正确");
+      }
+      this.getTime(60);
+      sendUrl({
+        code: this.form.code,
+        phone: this.form.phone
       }).then(res => {
-        //成功回调
         console.log(res);
+        if (res.data.code == 200) {
+          this.$message.success("您的验证码为" + res.data.data.captcha);
+        } else {
+          this.getTime(0);
+          this.getRandomCode();
+          this.$message.error(res.data.message);
+        }
       });
+    },
+    // 
+    handleAvatarSuccess(res, file) {
+      this.imageUrl = URL.createObjectURL(file.raw);
+      console.log(res);
+      this.form.avatar = res.data.file_path;
+      this.$refs.form.validateField("avatar");
+    },
+    beforeAvatarUpload(file) {
+      const isJPG = file.type === "image/jpeg";
+      const isLt2M = file.size / 1024 / 1024 < 2;
+
+      if (!isJPG) {
+        this.$message.error("上传头像图片只能是 JPG 格式!");
+      }
+      if (!isLt2M) {
+        this.$message.error("上传头像图片大小不能超过 2MB!");
+      }
+      return isJPG && isLt2M;
     }
   },
   created() {}
@@ -222,18 +269,32 @@ export default {
     color: white;
   }
 }
-.touxiang {
+.avatar-uploader {
   display: flex;
   justify-content: center;
-  margin: 26px 0 28px 0;
-  .el-upload--picture-card {
-    width: 100px;
-    height: 100px;
-    display: flex;
-    justify-content: center;
-    .el-icon-plus {
-      line-height: 100px;
-    }
-  }
+  margin-top: 20px;
+}
+.avatar-uploader .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.avatar-uploader .el-upload:hover {
+  border-color: #409eff;
+}
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 100px;
+  height: 100px;
+  line-height: 100px !important;
+  text-align: center;
+}
+.avatar {
+  width: 100px;
+  height: 100px;
+  display: block;
 }
 </style>
