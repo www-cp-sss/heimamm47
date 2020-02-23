@@ -137,7 +137,7 @@ export default {
               window.localStorage.setItem('token',res.data.data.token);
               this.$router.push('/index')
             }else{
-              this.$message.error(res.data.message)
+              this.$message.error(res.data.message) 
             }
           });
         }

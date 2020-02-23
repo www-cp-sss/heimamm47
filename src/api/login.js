@@ -6,5 +6,4 @@ export function login(data){
         data,
         withCredentials: true
     });
-    
 }
