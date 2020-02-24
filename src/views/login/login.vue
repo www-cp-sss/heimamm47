@@ -78,6 +78,7 @@
 import register from "./components/register";
 // import { login } from "../../api/login";
 import { login } from "./../../api/login";
+import  {setToken} from "../../utilis/token"
 export default {
   components: {
     register
@@ -134,7 +135,7 @@ export default {
             console.log(res);
             if(res.data.code==200){
               this.$message.success('登录成功!');
-              window.localStorage.setItem('token',res.data.data.token);
+             setToken(res.data.data.token);
               this.$router.push('/index')
             }else{
               this.$message.error(res.data.message) 
