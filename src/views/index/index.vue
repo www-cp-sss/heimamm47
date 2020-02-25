@@ -14,24 +14,29 @@
     </el-header>
     <el-container>
       <el-aside width="auto" class="index_aside">
-        <el-menu default-active="1" :collapse="isCollapse" class="el-menu-vertical-demo" >
-          <el-menu-item index="1">
+        <el-menu
+          router
+          :default-active="this.$router.path"
+          :collapse="isCollapse"
+          class="el-menu-vertical-demo"
+        >
+          <el-menu-item index="/index/chart">
             <i class="el-icon-pie-chart"></i>
             <span slot="title">数据概览</span>
           </el-menu-item>
-          <el-menu-item index="2">
+          <el-menu-item index="/index/user">
             <i class="el-icon-user"></i>
             <span slot="title">用户列表</span>
           </el-menu-item>
-          <el-menu-item index="3">
+          <el-menu-item index="/index/question">
             <i class="el-icon-edit-outline"></i>
             <span slot="title">题库列表</span>
           </el-menu-item>
-          <el-menu-item index="4">
+          <el-menu-item index="/index/business">
             <i class="el-icon-office-building"></i>
             <span slot="title">企业列表</span>
           </el-menu-item>
-          <el-menu-item index="5">
+          <el-menu-item index="/index/subject">
             <i class="el-icon-notebook-2"></i>
             <span slot="title">学科列表</span>
           </el-menu-item>
@@ -54,7 +59,7 @@ export default {
     return {
       username: "",
       touxiangUrl: "",
-      isCollapse:true,
+      isCollapse: true
     };
   },
   methods: {
@@ -84,10 +89,8 @@ export default {
   created() {
     info().then(res => {
       console.log(res);
-      this.$nextTick(() => {
-        this.username = res.data.data.username;
-        this.touxiangUrl = process.env.VUE_APP_URL + "/" + res.data.data.avatar;
-      });
+      this.username = res.data.data.username;
+      this.touxiangUrl = process.env.VUE_APP_URL + "/" + res.data.data.avatar;
     });
   }
 };
@@ -138,8 +141,8 @@ export default {
 .index_main {
   background-color: green;
 }
- .el-menu-vertical-demo:not(.el-menu--collapse) {
-    width: 200px;
-    min-height: 400px;
-  }
+.el-menu-vertical-demo:not(.el-menu--collapse) {
+  width: 200px;
+  min-height: 400px;
+}
 </style>
