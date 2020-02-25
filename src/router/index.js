@@ -50,4 +50,19 @@ const routerPush = VueRouter.prototype.push
 VueRouter.prototype.push = function push(location) {
   return routerPush.call(this, location).catch(error => error)
 }
+// 导入nprogress
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
+router.beforeEach((to,from,next)=>{
+  NProgress.start()
+  if(to.path=='/index'){
+    next('/index/chart')
+  }else{
+    next()
+  }
+})
+
+router.afterEach(()=>{
+  NProgress.done()
+})
 export default router
