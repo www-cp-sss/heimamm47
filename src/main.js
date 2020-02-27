@@ -8,6 +8,7 @@ import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import './assets/font/iconfont.css'
 import './assets/css/base.css';
+import store from "./store/vuex"
 // 引用less
 import less from 'less';
 import axios from 'axios'
@@ -18,5 +19,6 @@ Vue.use(less)
 Vue.use(ElementUI);
 new Vue({
   render: h => h(App),
-  router
+  router,
+  store
 }).$mount('#app')

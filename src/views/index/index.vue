@@ -7,8 +7,10 @@
         <span class="index_title">黑马面面</span>
       </div>
       <div class="right">
-        <img :src="touxiangUrl" alt />
-        <span class="index_userName">{{username}},您好</span>
+        <div class="right_img">
+          <img :src="$store.state.avatar" alt />
+        </div>
+        <span class="index_userName">{{$store.state.username}},您好</span>
         <el-button type="primary" class="exit" @click="btnExit">退出</el-button>
       </div>
     </el-header>
@@ -16,7 +18,7 @@
       <el-aside width="auto" class="index_aside">
         <el-menu
           router
-          :default-active="this.$router.path"
+          :default-active="this.$route.path"
           :collapse="isCollapse"
           class="el-menu-vertical-demo"
         >
@@ -51,7 +53,7 @@
 
 <script>
 // import { MessageBox } from 'element-ui';
-import { info, layout } from "./../../api/index";
+import {layout } from "./../../api/index";
 import { removeToken } from "../../utilis/token";
 // import {getToken} from './../../utilis/token'
 export default {
@@ -59,7 +61,7 @@ export default {
     return {
       username: "",
       touxiangUrl: "",
-      isCollapse: true
+      isCollapse: false
     };
   },
   methods: {
@@ -74,6 +76,8 @@ export default {
             if (res.data.code == 200) {
               this.$message.success("退出成功!");
               removeToken();
+              this.$store.commit('changeusername','')
+              this.$store.commit('changeavatar','')
               this.$router.push("/");
             }
           });
@@ -86,13 +90,25 @@ export default {
         });
     }
   },
-  created() {
-    info().then(res => {
-      console.log(res);
-      this.username = res.data.data.username;
-      this.touxiangUrl = process.env.VUE_APP_URL + "/" + res.data.data.avatar;
-    });
-  }
+  // beforeCreate() {
+  //   if(getToken()==null){
+  //     this.$message.error('您还未登录,请登录');
+  //     this.$router.push('/')
+  //   }
+  // },
+  // created() {
+  //   info().then(res => {
+  //     console.log(res);
+  //     // if(res.data.code==200){
+  //     this.username = res.data.data.username;
+  //     this.touxiangUrl = process.env.VUE_APP_URL + "/" + res.data.data.avatar;
+  //     // }else if(res.data.code==206){
+  //     //   this.$message.error('登陆状态异常')
+  //     //   removeToken();
+  //     //   this.$router.push('/')
+  //     // }
+  //   });
+  // }
 };
 </script>
 
@@ -123,10 +139,17 @@ export default {
     align-items: center;
     height: 100%;
     float: right;
-    img {
+    .right_img {
       width: 43px;
       height: 43px;
+      border-radius: 21.5px;
+      overflow: hidden;
+      img {
+        width: 43px;
+        height: 43px;
+      }
     }
+
     .index_userName {
       margin: 0 38px 0 9px;
       font-size: 14px;
