@@ -91,7 +91,7 @@ router.beforeEach((to, from, next) => {
   //     }
   //   })
   // }
-  if (to.path == '/index') {
+  if (to.path=='/index') {
     if (!getToken()) {
       Message.error('您还未登录,请登录');
       NProgress.done()

@@ -18,7 +18,7 @@
           </ul>
         </div>
         <div id="form">
-          <el-form ref="form" :model="form" :rules="rules" class="demo-ruleForm">
+          <el-form ref="form" :model="form" :rules="rules" class="demo-ruleForm" @keyup.enter.native="submitForm">
             <el-form-item prop="user">
               <el-input placeholder="请输入内容" prefix-icon="el-icon-user" v-model="form.user"></el-input>
             </el-form-item>

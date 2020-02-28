@@ -162,7 +162,7 @@ export default {
 .index_aside {
 }
 .index_main {
-  background-color: green;
+  background-color: #E9E8EB;
 }
 .el-menu-vertical-demo:not(.el-menu--collapse) {
   width: 200px;
