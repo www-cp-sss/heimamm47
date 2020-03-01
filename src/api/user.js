@@ -1,35 +1,35 @@
 import request from '../utilis/request'
-export function subAdd(data) {
+export function userAdd(data) {
     return request({
-        url: '/subject/add',
+        url: '/user/add',
         method: 'post',
         data
     })
 }
-export function subList(params) {
+export function userList(params) {
     return request({
-        url: '/subject/list',
+        url: '/user/list',
         method: 'get',
         params
     })
 }
-export function subStatus(data) {
+export function userStatus(data) {
     return request({
-        url: '/subject/status',
+        url: '/user/status',
         method: 'post',
         data
     })
 }
-export function subEdit(data) {
+export function userEdit(data) {
     return request({
-        url: '/subject/edit',
+        url: '/user/edit',
         method: 'post',
         data
     })
 }
-export function subRemove(data) {
+export function userRemove(data) {
     return request({
-        url: '/subject/remove',
+        url: '/user/remove',
         method: 'post',
         data
     })

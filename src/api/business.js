@@ -1,35 +1,35 @@
 import request from '../utilis/request'
-export function subAdd(data) {
+export function busAdd(data) {
     return request({
-        url: '/subject/add',
+        url: '/enterprise/add',
         method: 'post',
         data
     })
 }
-export function subList(params) {
+export function busList(params) {
     return request({
-        url: '/subject/list',
+        url: '/enterprise/list',
         method: 'get',
         params
     })
 }
-export function subStatus(data) {
+export function busStatus(data) {
     return request({
-        url: '/subject/status',
+        url: '/enterprise/status',
         method: 'post',
         data
     })
 }
-export function subEdit(data) {
+export function busEdit(data) {
     return request({
-        url: '/subject/edit',
+        url: '/enterprise/edit',
         method: 'post',
         data
     })
 }
-export function subRemove(data) {
+export function busRemove(data) {
     return request({
-        url: '/subject/remove',
+        url: '/enterprise/remove',
         method: 'post',
         data
     })

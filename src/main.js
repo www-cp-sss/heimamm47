@@ -17,6 +17,7 @@ Vue.prototype.$axios = axios;
 Vue.use(less)
 // 注册 Element-ui
 Vue.use(ElementUI);
+import './utilis/filters.js'
 new Vue({
   render: h => h(App),
   router,
